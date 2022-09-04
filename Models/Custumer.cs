@@ -10,6 +10,7 @@ namespace Models
         }
 
         public Guid Id { get; set; }
+        
 
         [Required(ErrorMessage = "Nome é obrigátorio")]
         public string Name { get; set; }
