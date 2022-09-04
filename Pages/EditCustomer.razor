@@ -1,0 +1,36 @@
+﻿@page "/editcustomer/{customerId}"
+@inject Services.ICustomerService customerService;
+@inject NavigationManager NavigationManager;
+@using Models;
+
+<CustomerForm Title="Editar cliente" Customer="Customer" Save="SaveCustomer" Cancel="Cancel"/>
+
+@code {
+    [Parameter]
+    public string customerId { get; set; }
+
+    Customer Customer = new();
+    List<Customer> customers;
+    public async void SaveCustomer()
+    {
+        var currentCustomer = customers.FirstOrDefault(c => c.Id.ToString().Equals(customerId));
+        currentCustomer.Save(Customer.Name, Customer.Email, Customer.Telefone, Customer.Endereço);
+        await customerService.SaveCustomers(customers);
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await customerService.GetCustomers();
+
+        if (customers.Count.Equals(0))
+            return;
+
+            Customer = customers.FirstOrDefault(c => c.Id.ToString().Equals(customerId));
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

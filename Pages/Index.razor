@@ -1,0 +1,90 @@
+﻿@page "/"
+@inject Services.ICustomerService customerService;
+@inject IJSRuntime JsRunTime;
+@using Models;
+
+<style>
+    #btn-add {
+        background-color: #0a58ca;
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    #btn-edit {
+        background-color: #ffc107;
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    #btn-delete {
+        background-color: #dc3545;
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+
+<p>
+    <a id=btn-add href="/addcustomer">Add</a>
+</p>
+
+
+<h4 class="mt-4">Clientes Cadastrados</h4>
+@if (customers == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Email</td>
+                    <td>@customer.Name</td>
+                    <td>@customer.Telefone</td>
+                    <td>@customer.Endereço</td>
+                    <td>
+                        <a id="btn-edit" href="/editcustomer/@customer.Id">Editar</a>
+                        <a id="btn-delete" href="#" @onclick="async () => await DeleteCustomer(customer.Id)">Deletar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Customer> customers;
+
+    async Task DeleteCustomer(Guid id)
+    {
+        bool confirmed = await JsRunTime.InvokeAsync<bool>("confirm", "Tem certeza que deseja deletar?");
+        if (confirmed is false)
+            return;
+        var customerToRemove = customers.FirstOrDefault(c => c.Id.Equals(id));
+        customers.Remove(customerToRemove);
+        await customerService.SaveCustomers(customers);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await customerService.GetCustomers();
+    }
+}
+
+

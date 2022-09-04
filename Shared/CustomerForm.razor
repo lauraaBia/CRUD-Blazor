@@ -1,0 +1,54 @@
+﻿@using Models
+
+<h3>@Title</h3>
+<EditForm Model="@Customer" OnValidSubmit="@TriggerOnSave">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="exampleInputEmail">Email</label>
+        <input type="email" @bind-value="Customer.Email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Digite um email" />
+        <ValidationMessage For="@(() => Customer.Email)"/> 
+    </div>
+    <div class="form-group">
+        <label for="exampleInputName">Nome</label>
+        <input type="text" @bind-value="Customer.Name" class="form-control" id="exampleInputName" aria-describedby="emailHelp" placeholder="Digite um Nome" />
+        <ValidationMessage For="@(() => Customer.Name)"/>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputTelefone">Telefone</label>
+        <input type="text" @bind-value="Customer.Telefone" class="form-control" id="exampleInputTelefone" aria-describedby="emailHelp" placeholder="Digite um Telefone" />
+        <ValidationMessage For="@(() => Customer.Name)"/>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEndereço">Endereço</label>
+        <input type="text" @bind-value="Customer.Endereço" class="form-control" id="exampleInputEndereço" aria-describedby="emailHelp" placeholder="Digite um Endereço" />
+        <ValidationMessage For="@(() => Customer.Name)"/>
+    </div>
+    <br />
+    <br />
+    <button @onclick="TriggerOnCancel" class="btn btn-danger">Cancel</button>
+    <button @onclick="TriggerOnSave" class="btn btn-primary">Salvar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public Customer Customer { get; set; }
+
+    [Parameter]
+    public EventCallback Save { get; set; }
+
+    [Parameter]
+    public EventCallback Cancel { get; set; }
+
+    async Task TriggerOnCancel()
+    {
+        await Cancel.InvokeAsync();
+    }
+
+    async Task TriggerOnSave()
+    {
+        await Save.InvokeAsync();
+    }
+}

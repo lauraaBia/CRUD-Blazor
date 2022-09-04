@@ -1,0 +1,28 @@
+﻿@page "/addcustomer"
+@inject Services.ICustomerService customerService;
+@inject NavigationManager NavigationManager;
+@using Models;
+
+<CustomerForm Title="Cadastrar cliente" Customer="Customer" Save="SaveCustomer" Cancel="Cancel" />
+
+@code {
+    Customer Customer = new();
+    List<Customer> customers;
+    public async void SaveCustomer()
+    {
+        Customer.New();
+        customers.Add(Customer);
+        await customerService.SaveCustomers(customers);
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await customerService.GetCustomers();
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
